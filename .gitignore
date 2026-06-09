@@ -1,0 +1,19 @@
+# Internal tool state — do not commit
+.bkit/
+.claude/
+.kilocode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Backups
+index-old.html
+
+# Copyright images — do not publish
+입국신고서.jfif
+입국신고서 및 신청 링크.jpg
+*.jfif
+
+# Internal docs
+빌드_프롬프트.md

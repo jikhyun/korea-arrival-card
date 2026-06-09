@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Korea e-Arrival Guide</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Google Analytics 4 — replace G-XXXXXXXXXX with your Measurement ID -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+  <script src="languages.js"></script>
+  <script src="translations.js"></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+
+  <div id="guide-app">
+
+    <!-- Header -->
+    <header class="guide-header">
+      <div class="container">
+        <a href="index.html" class="back-btn" id="back-btn">← Change Language</a>
+        <div style="text-align:center;flex:1;">
+          <div style="font-size:0.75rem;opacity:0.8;">🇰🇷 Korea e-Arrival Guide</div>
+          <div id="step-label" style="font-weight:700;font-size:0.95rem;"></div>
+        </div>
+        <a href="https://e-arrivalcard.go.kr" target="_blank" rel="noopener"
+           style="background:rgba(255,255,255,0.2);color:white;padding:8px 12px;border-radius:8px;font-size:0.78rem;font-weight:700;text-decoration:none;white-space:nowrap;">
+          Official Site
+        </a>
+      </div>
+    </header>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar-wrap">
+      <div class="container">
+        <div class="progress-info">
+          <span id="progress-text" style="font-weight:700;">Step 1 of 5</span>
+          <span style="opacity:0.8;font-size:0.8rem;">Korea e-Arrival Card</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+        </div>
+        <div class="step-dots">
+          <div class="step-dot active" title="Step 1">1</div>
+          <div class="step-dot" title="Step 2">2</div>
+          <div class="step-dot" title="Step 3">3</div>
+          <div class="step-dot" title="Step 4">4</div>
+          <div class="step-dot" title="Step 5">5</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Guide Content -->
+    <div class="guide-content">
+      <div class="container">
+
+        <!-- Step 1: Preparation -->
+        <div class="step-panel active" id="step-1">
+          <h2 class="step-title">1. Preparation</h2>
+          <div id="step1-content"></div>
+        </div>
+
+        <!-- Step 2: Access Site -->
+        <div class="step-panel" id="step-2">
+          <h2 class="step-title">2. Access the Official Site</h2>
+          <div id="step2-content"></div>
+        </div>
+
+        <!-- Step 3: Passport Info -->
+        <div class="step-panel" id="step-3">
+          <h2 class="step-title">3. Passport Information</h2>
+          <div id="step3-content"></div>
+        </div>
+
+        <!-- Step 4: Travel Info -->
+        <div class="step-panel" id="step-4">
+          <h2 class="step-title">4. Travel Information</h2>
+          <div id="step4-content"></div>
+        </div>
+
+        <!-- Step 5: Submit -->
+        <div class="step-panel" id="step-5">
+          <h2 class="step-title">5. Submit &amp; Done</h2>
+          <div id="step5-content"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Fixed Navigation -->
+    <div class="nav-buttons">
+      <div class="container">
+        <button class="btn btn-secondary" id="btn-prev" disabled>← Back</button>
+        <button class="btn btn-primary" id="btn-next">Next →</button>
+      </div>
+    </div>
+
+  </div><!-- #guide-app -->
+
+  <!-- Footer -->
+  <footer class="site-footer" style="margin-bottom:80px;">
+    <div class="container">
+      <p>⚠️ This is not an official government website. For official info visit
+        <a href="https://e-arrivalcard.go.kr" target="_blank">e-arrivalcard.go.kr</a>
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>

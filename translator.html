@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Korea Arrival Form Translator — 155 Languages</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+KR:wght@400;700&family=Noto+Sans+SC:wght@400;700&family=Noto+Sans+TC:wght@400;700&family=Noto+Sans+Bengali:wght@400;700&family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
+  <script src="languages.js"></script>
+  <script src="form-data.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #0f4c75;
+      --teal: #1b9aaa;
+      --teal-light: #e8f8fa;
+      --teal-border: #b2e4ea;
+      --bg: #f0f4f8;
+      --white: #ffffff;
+      --border: #dde3ea;
+      --text: #1a2332;
+      --muted: #6b7a8d;
+      --korean-accent: #2c3e6b;
+      --shadow: 0 2px 16px rgba(15,76,117,0.10);
+      --radius: 16px;
+    }
+
+    body {
+      font-family: 'Inter', 'Noto Sans', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+    }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .header-icon {
+      width: 40px; height: 40px;
+      background: var(--teal-light);
+      border: 2px solid var(--teal-border);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+    }
+    .header-title { font-size: 1.3rem; font-weight: 700; color: var(--primary); }
+    .header-sub { font-size: 0.8rem; color: var(--muted); margin-top: 1px; }
+
+    /* Language Selector */
+    .lang-selector-wrap { display: flex; flex-direction: column; gap: 3px; }
+    .lang-selector-label { font-size: 0.72rem; color: var(--muted); font-weight: 500; }
+    .lang-selector-box {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 14px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      min-width: 180px;
+      position: relative;
+    }
+    .lang-selector-box:hover { border-color: var(--teal); }
+    .lang-selector-name { font-weight: 600; font-size: 1rem; flex: 1; }
+    .lang-selector-arrow { color: var(--muted); font-size: 0.9rem; }
+
+    /* Dropdown */
+    .lang-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: white;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      width: 320px;
+      max-height: 420px;
+      overflow: hidden;
+      display: none;
+      flex-direction: column;
+      z-index: 200;
+    }
+    .lang-dropdown.open { display: flex; }
+    .lang-search-wrap { padding: 10px; border-bottom: 1px solid var(--border); }
+    .lang-search {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .lang-search:focus { border-color: var(--teal); }
+    .lang-list { overflow-y: auto; flex: 1; }
+    .lang-option {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: background 0.1s;
+      font-size: 0.9rem;
+    }
+    .lang-option:hover { background: var(--teal-light); }
+    .lang-option.selected { background: var(--teal-light); font-weight: 600; }
+    .lang-option-flag { font-size: 1.1rem; width: 24px; text-align: center; }
+    .lang-option-native { flex: 1; }
+    .lang-option-en { font-size: 0.75rem; color: var(--muted); }
+    .lang-tier { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .t1 { background: #28a745; }
+    .t2 { background: #17a2b8; }
+    .t3 { background: #adb5bd; }
+
+    /* ── Main Content ── */
+    .main { padding: 24px 20px 48px; max-width: 1200px; margin: 0 auto; }
+
+    /* Notice banner */
+    .notice-banner {
+      background: #fff8e1;
+      border: 1px solid #ffe082;
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: 0.82rem;
+      margin-bottom: 20px;
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .notice-banner a { color: var(--primary); font-weight: 600; }
+
+    /* Form Panels */
+    .forms-container {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .forms-grid {
+      display: grid;
+      grid-template-columns: 1fr 48px 1fr;
+      gap: 0;
+      align-items: start;
+    }
+    @media (max-width: 700px) {
+      .forms-grid { grid-template-columns: 1fr; gap: 20px; }
+      .translate-arrow { display: none; }
+    }
+
+    /* Panel labels */
+    .panel-label { font-size: 0.85rem; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
+    .panel-sub { font-size: 0.75rem; color: var(--muted); margin-bottom: 14px; }
+
+    /* Arrow */
+    .translate-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding-top: 60px;
+      gap: 6px;
+    }
+    .arrow-circle {
+      width: 48px; height: 48px;
+      background: var(--teal);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      color: white;
+      box-shadow: 0 4px 12px rgba(27,154,170,0.35);
+    }
+    .arrow-label { font-size: 0.7rem; color: var(--muted); font-weight: 600; }
+
+    /* Form Card */
+    .form-card {
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--white);
+    }
+    .form-card.translated {
+      border-color: var(--teal-border);
+      background: #f7fdfe;
+    }
+
+    .form-header {
+      padding: 16px 18px 12px;
+      border-bottom: 1px solid var(--border);
+      background: #f8fafc;
+    }
+    .form-card.translated .form-header {
+      background: var(--teal-light);
+      border-color: var(--teal-border);
+    }
+
+    .form-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+    .form-title { font-size: 1.5rem; font-weight: 700; color: var(--primary); line-height: 1.2; }
+    .form-card.translated .form-title { color: var(--teal); }
+    .form-subtitle { font-size: 0.72rem; color: var(--muted); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 3px; }
+    .country-badge {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .form-card.translated .country-badge {
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
+    /* Section header */
+    .section-header {
+      padding: 8px 18px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+    }
+    .form-card.translated .section-header {
+      background: var(--teal-light);
+      border-color: var(--teal-border);
+    }
+
+    /* Fields */
+    .fields-body { padding: 0; }
+    .field-row { display: grid; border-bottom: 1px solid var(--border); }
+    .field-row.col2 { grid-template-columns: 1fr 1fr; }
+    .field-row.col1 { grid-template-columns: 1fr; }
+    .field-row:last-child { border-bottom: none; }
+
+    .field-cell {
+      padding: 12px 18px;
+      border-right: 1px solid var(--border);
+    }
+    .field-cell:last-child { border-right: none; }
+    .form-card.translated .field-cell { border-color: var(--teal-border); }
+    .form-card.translated .field-row { border-color: var(--teal-border); }
+
+    .field-main { font-size: 0.95rem; font-weight: 700; color: var(--text); line-height: 1.3; }
+    .field-hint { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
+    .form-card.translated .field-main { font-size: 1rem; }
+
+    /* Fallback notice */
+    .fallback-notice {
+      margin: 12px 18px;
+      background: #fff8e1;
+      border: 1px solid #ffe082;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.8rem;
+      color: #7b5e00;
+    }
+    .fallback-notice strong { display: block; margin-bottom: 2px; }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+    .footer a { color: var(--primary); }
+
+    /* RTL support */
+    .rtl-content { direction: rtl; text-align: right; }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-left">
+    <div class="header-icon">📋</div>
+    <div>
+      <div class="header-title">Korea Arrival Form Translator</div>
+      <div class="header-sub">Choose a language and see the arrival form as a translated document.</div>
+    </div>
+  </div>
+
+  <!-- Language Selector -->
+  <div class="lang-selector-wrap" style="position:relative;">
+    <div class="lang-selector-label">Selected language</div>
+    <div class="lang-selector-box" id="lang-selector-btn" onclick="toggleDropdown()">
+      <span id="selected-flag">🇬🇧</span>
+      <span class="lang-selector-name" id="selected-name">English</span>
+      <span class="lang-selector-arrow">▾</span>
+    </div>
+    <div class="lang-dropdown" id="lang-dropdown">
+      <div class="lang-search-wrap">
+        <input type="text" class="lang-search" id="lang-search-input" placeholder="🔍 Search language..." oninput="filterLangs(this.value)" autocomplete="off">
+      </div>
+      <div class="lang-list" id="lang-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Main -->
+<div class="main">
+
+  <!-- Notice -->
+  <div class="notice-banner">
+    ⚠️ Submit at least <strong>72 hours before arrival</strong> at
+    <a href="https://e-arrivalcard.go.kr" target="_blank" rel="noopener">e-arrivalcard.go.kr</a>
+    &nbsp;|&nbsp; This is not an official government website.
+  </div>
+
+  <!-- Forms Container -->
+  <div class="forms-container">
+    <div class="forms-grid">
+
+      <!-- LEFT: Korean Original -->
+      <div>
+        <div class="panel-label">Original Korean arrival form</div>
+        <div class="panel-sub">The document travelers see when entering Korea.</div>
+        <div class="form-card" id="form-original">
+          <div class="form-header">
+            <div class="form-title-row">
+              <div>
+                <div class="form-title">입국신고서</div>
+                <div class="form-subtitle">ARRIVAL CARD</div>
+              </div>
+              <div class="country-badge">KOREA</div>
+            </div>
+          </div>
+          <div class="section-header">Traveler information</div>
+          <div class="fields-body">
+            <div class="field-row col2">
+              <div class="field-cell"><div class="field-main">성</div><div class="field-hint">Surname</div></div>
+              <div class="field-cell"><div class="field-main">이름</div><div class="field-hint">Given name</div></div>
+            </div>
+            <div class="field-row col2">
+              <div class="field-cell"><div class="field-main">생년월일</div><div class="field-hint">Date of birth</div></div>
+              <div class="field-cell"><div class="field-main">국적</div><div class="field-hint">Nationality</div></div>
+            </div>
+            <div class="field-row col1">
+              <div class="field-cell"><div class="field-main">여권번호</div><div class="field-hint">Passport number</div></div>
+            </div>
+            <div class="field-row col2">
+              <div class="field-cell"><div class="field-main">항공편명</div><div class="field-hint">Flight number</div></div>
+              <div class="field-cell"><div class="field-main">체류 기간</div><div class="field-hint">Length of stay</div></div>
+            </div>
+            <div class="field-row col1">
+              <div class="field-cell"><div class="field-main">한국 내 체류 주소</div><div class="field-hint">Address in Korea</div></div>
+            </div>
+            <div class="field-row col2">
+              <div class="field-cell"><div class="field-main">방문 목적</div><div class="field-hint">Purpose of visit</div></div>
+              <div class="field-cell"><div class="field-main">직업</div><div class="field-hint">Occupation</div></div>
+            </div>
+            <div class="field-row col1">
+              <div class="field-cell"><div class="field-main">서명</div><div class="field-hint">Signature</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center Arrow -->
+      <div class="translate-arrow">
+        <div class="arrow-circle">→</div>
+        <div class="arrow-label">Translate</div>
+      </div>
+
+      <!-- RIGHT: Translated -->
+      <div>
+        <div class="panel-label">Translated arrival form</div>
+        <div class="panel-sub">Same form layout, changed into the selected language.</div>
+        <div class="form-card translated" id="form-translated">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  ⚠️ This is <strong>not</strong> an official government website. For official information, visit
+  <a href="https://e-arrivalcard.go.kr" target="_blank" rel="noopener">e-arrivalcard.go.kr</a><br>
+  이 사이트는 공식 정부 사이트가 아닙니다. 참고용으로만 사용하세요.
+</div>
+
+<script>
+let selectedLang = 'en';
+let dropdownOpen = false;
+
+function toggleDropdown() {
+  dropdownOpen = !dropdownOpen;
+  const dd = document.getElementById('lang-dropdown');
+  dd.classList.toggle('open', dropdownOpen);
+  if (dropdownOpen) {
+    setTimeout(() => document.getElementById('lang-search-input').focus(), 50);
+  }
+}
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.lang-selector-wrap')) {
+    document.getElementById('lang-dropdown').classList.remove('open');
+    dropdownOpen = false;
+  }
+});
+
+function buildLangList(filter) {
+  const q = (filter || '').toLowerCase();
+  const list = document.getElementById('lang-list');
+  const filtered = LANGUAGES.filter(l =>
+    !q || l.name.toLowerCase().includes(q) || l.native.toLowerCase().includes(q) || l.code.toLowerCase().includes(q)
+  );
+  list.innerHTML = filtered.map(l => `
+    <div class="lang-option ${l.code === selectedLang ? 'selected' : ''}" onclick="selectLang('${l.code}')">
+      <span class="lang-option-flag">${l.flag}</span>
+      <span class="lang-option-native">${l.native}</span>
+      <span class="lang-option-en">${l.name}</span>
+      <span class="lang-tier t${l.tier}"></span>
+    </div>
+  `).join('');
+}
+
+function filterLangs(val) { buildLangList(val); }
+
+function selectLang(code) {
+  selectedLang = code;
+  const lang = LANGUAGES.find(l => l.code === code);
+  if (lang) {
+    document.getElementById('selected-flag').textContent = lang.flag;
+    document.getElementById('selected-name').textContent = lang.native;
+  }
+  document.getElementById('lang-dropdown').classList.remove('open');
+  dropdownOpen = false;
+  document.getElementById('lang-search-input').value = '';
+  buildLangList('');
+  renderTranslatedForm(code);
+}
+
+function renderTranslatedForm(code) {
+  const data = getFormData(code);
+  const isRTL = data.rtl;
+  const panel = document.getElementById('form-translated');
+
+  const langName = LANGUAGES.find(l => l.code === code)?.native || code;
+  const fallbackNotice = data._fallback
+    ? `<div class="fallback-notice"><strong>🌐 ${langName}</strong>Full translation coming soon — showing field names in English.</div>`
+    : '';
+
+  const dir = isRTL ? ' dir="rtl"' : '';
+  const rtlClass = isRTL ? ' rtl-content' : '';
+
+  panel.innerHTML = `
+    <div class="form-header"${dir}>
+      <div class="form-title-row">
+        <div>
+          <div class="form-title${rtlClass}">${data.formTitle}</div>
+          <div class="form-subtitle">${data.langCode}</div>
+        </div>
+        <div class="country-badge">${data.country}</div>
+      </div>
+    </div>
+    <div class="section-header${rtlClass}"${dir}>${data.travelerInfo}</div>
+    ${fallbackNotice}
+    <div class="fields-body"${dir}>
+      <div class="field-row col2">
+        <div class="field-cell${rtlClass}">
+          <div class="field-main">${data.fields.surname.label}</div>
+          <div class="field-hint">${data.fields.surname.hint}</div>
+        </div>
+        <div class="field-cell${rtlClass}">
+          <div class="field-main">${data.fields.givenName.label}</div>
+          <div class="field-hint">${data.fields.givenName.hint}</div>
+        </div>
+      </div>
+      <div class="field-row col2">
+        <div class="field-cell${rtlClass}">
+          <div class="field-main">${data.fields.dob.label}</div>
+          <div class="field-hint">${data.fields.dob.hint}</div>
+        </div>
+        <div class="field-cell${rtlClass}">
+          <div class="field-main">${data.fields.nationality.label}</div>
+          <div class="field-hint">${data.fields.nationality.hint}</div>
+        </div>
+      </div>
+      <div class="field-row col1">
+        <div class="field-cell${rtlClass}">
+          <div class="field-main">${data.fields.passportNo.label}</div>
+          <div class="field-hint">${data.fields.passportNo.hint}</div>
+        </div>
+      </div>
+      <div class="field-row col2">
+        <div class="field-cell${rtlClass}">
+          <div class="field-main">${data.fields.flightNo.label}</div>
+          <div class="field-hint">${data.fields.flightNo.hint}</div>
+        </div>
+        <div class="field-cell${rtlClass}">
+          <div class="field-main">${data.fields.lengthOfStay.label}</div>
+          <div class="field-hint">${data.fields.lengthOfStay.hint}</div>
+        </div>
+      </div>
+      <div class="field-row col1">
+        <div class="field-cell${rtlClass}">
+          <div class="field-main">${data.fields.addressInKorea.label}</div>
+          <div class="field-hint">${data.fields.addressInKorea.hint}</div>
+        </div>
+      </div>
+      <div class="field-row col2">
+        <div class="field-cell${rtlClass}">
+          <div class="field-main">${data.fields.purposeOfVisit.label}</div>
+          <div class="field-hint">${data.fields.purposeOfVisit.hint}</div>
+        </div>
+        <div class="field-cell${rtlClass}">
+          <div class="field-main">${data.fields.occupation.label}</div>
+          <div class="field-hint">${data.fields.occupation.hint}</div>
+        </div>
+      </div>
+      <div class="field-row col1">
+        <div class="field-cell${rtlClass}">
+          <div class="field-main">${data.fields.signature.label}</div>
+          <div class="field-hint">${data.fields.signature.hint}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// Init
+buildLangList('');
+renderTranslatedForm('en');
+</script>
+</body>
+</html>
