@@ -6,6 +6,14 @@
   <meta name="description" content="Korea Arrival Card translator in 155 languages. See what each field means in your language before filling the paper form at the airport.">
   <title>Korea Arrival Card Translator — 155 Languages</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇰🇷</text></svg>">
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BCY6SVF9CT"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-BCY6SVF9CT');
+  </script>
   <script src="languages.js"></script>
   <script src="form-data.js"></script>
   <style>
@@ -716,6 +724,10 @@
         `${lang.flag || '🌐'} ${lang.name} — ${lang.native}`;
 
       renderTranslation(code, lang);
+
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'language_selected', { lang_code: code, lang_name: lang.name });
+      }
 
       // Save URL + localStorage only for languages with actual translations
       if (FORM_DATA[code]) {
