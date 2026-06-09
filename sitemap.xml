@@ -32,4 +32,46 @@
   <url><loc>https://korea-arrival-card.vercel.app/?lang=ja</loc>    <lastmod>2026-06-09</lastmod><priority>0.9</priority></url>
   <url><loc>https://korea-arrival-card.vercel.app/?lang=ko</loc>    <lastmod>2026-06-09</lastmod><priority>0.9</priority></url>
 
+  <!-- Tier 2 language pages -->
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=tl</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=ms</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=nl</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=sv</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=no</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=da</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=fi</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=ro</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=cs</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=sk</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=bg</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=uk</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=sr</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=hr</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=el</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=he</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=fa</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=mn</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=ne</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=sw</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=ta</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=te</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=mr</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=gu</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=ml</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=kn</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=pa</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=ur</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=si</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=my</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=km</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=lo</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=ka</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=hy</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=az</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=kk</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=uz</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=am</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=ha</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+  <url><loc>https://korea-arrival-card.vercel.app/?lang=yo</loc>    <lastmod>2026-06-09</lastmod><priority>0.8</priority></url>
+
 </urlset>
