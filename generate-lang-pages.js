@@ -3,9 +3,8 @@ const path = require('path');
 
 const baseDir  = __dirname;
 const BASE_URL = 'https://korea-arrival-card.vercel.app';
-const GA_ID    = 'G-BCY6SVF9CT';
 
-// Load LANGUAGES and FORM_DATA from existing JS files
+// Load LANGUAGES and FORM_DATA
 let LANGUAGES, FORM_DATA;
 {
   const langsCode = fs.readFileSync(path.join(baseDir, 'languages.js'), 'utf8');
@@ -13,6 +12,9 @@ let LANGUAGES, FORM_DATA;
   const fn = new Function(langsCode + '\n' + formCode + '\nreturn { LANGUAGES, FORM_DATA };');
   ({ LANGUAGES, FORM_DATA } = fn());
 }
+
+// Read index.html as template (normalize CRLF → LF)
+const template = fs.readFileSync(path.join(baseDir, 'index.html'), 'utf8').replace(/\r\n/g, '\n');
 
 const targetLangs = LANGUAGES.filter(l => l.tier === 1 || l.tier === 2);
 
@@ -25,139 +27,229 @@ function esc(str) {
     .replace(/"/g, '&quot;');
 }
 
-function hreflangTags() {
-  const lines = [`  <link rel="alternate" hreflang="x-default" href="${BASE_URL}/">`];
-  for (const l of targetLangs) {
-    lines.push(`  <link rel="alternate" hreflang="${l.code}" href="${BASE_URL}/${l.code}/">`);
-  }
-  return lines.join('\n');
+function hint(h) {
+  return h ? `<div class="tc-hint">${esc(h)}</div>` : '';
 }
 
-const FIELD_ORDER = [
-  'surname','givenName','gender','nationality','dob','occupation',
-  'addressInKorea','purposeOfVisit','departureDate','departureFlightNo','signature'
-];
+function renderPurposeGrid(opts) {
+  if (!opts || opts.length < 12) return '';
+  const [tour, indiv, group, biz, diplo, med, family, conf, employ, study, sports, others] = opts;
+  return `<div class="hc-cb-grid">
+        <div>
+          <div class="hc-cb">${esc(tour)}</div>
+          <div class="hc-cb hc-cb-ind">${esc(indiv)}</div>
+          <div class="hc-cb hc-cb-ind">${esc(group)}</div>
+        </div>
+        <div class="hc-cb">${esc(family)}</div>
+        <div class="hc-cb">${esc(biz)}</div>
+        <div class="hc-cb">${esc(conf)}</div>
+        <div class="hc-cb">${esc(diplo)}</div>
+        <div class="hc-cb">${esc(employ)}</div>
+        <div class="hc-cb">${esc(med)}</div>
+        <div class="hc-cb">${esc(study)}</div>
+        <div></div>
+        <div class="hc-cb">${esc(sports)}</div>
+        <div class="hc-cb hc-cb-full">${esc(others)} (&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</div>
+      </div>`;
+}
 
-function renderFields(data, lang) {
+function renderTransCard(data, lang) {
   const f   = data.fields;
-  const ef  = FORM_DATA['en'].fields;
-  const dir = lang.rtl ? 'rtl' : 'ltr';
+  const dir = (lang.rtl || data.rtl) ? 'rtl' : 'ltr';
 
-  return FIELD_ORDER.map(key => {
-    const field   = f[key]  || ef[key];
-    const enField = ef[key];
+  const fallback = data._fallback
+    ? `<div class="fallback-notice">ℹ️ <strong>${esc(data._nativeName || lang.native)}</strong> — showing English.</div>`
+    : '';
 
-    let html = `    <div class="field" dir="${dir}">\n`;
-    html += `      <div class="field-en">${esc(enField.label)}</div>\n`;
-    html += `      <div class="field-label">${esc(field.label)}</div>\n`;
+  const genderCell = f.gender.options
+    ? f.gender.options.map(o => `<div style="font-size:8.5px;line-height:2">□ ${esc(o)}</div>`).join('')
+    : `<span class="hc-lbl" style="font-size:8.5px">${esc(f.gender.label)}</span>`;
 
-    if (field.hint) {
-      html += `      <div class="field-hint">${esc(field.hint).replace(/\n/g, '<br>')}</div>\n`;
-    }
-    if (field.options) {
-      html += `      <div class="field-options">\n`;
-      field.options.forEach(opt => {
-        html += `        <span class="option">□ ${esc(opt)}</span>\n`;
-      });
-      html += `      </div>\n`;
-    }
-    html += `    </div>`;
-    return html;
-  }).join('\n');
+  return `${fallback}<div class="html-card trans-card" dir="${dir}">
+
+        <!-- HEADER -->
+        <div class="hc-head">
+          <div class="hc-logo">
+            <div class="hc-logo-emblem">KIS</div>
+            <div class="hc-logo-name">KOREA<br>IMMIGRATION<br>SERVICE</div>
+          </div>
+          <div class="hc-title">
+            <div class="hc-title-en">${esc(data.formTitle)}</div>
+            <div class="hc-title-ko">${esc(lang.native)}</div>
+          </div>
+          <div class="hc-note" style="color:#0b6875;font-size:7px">${esc(lang.name)}</div>
+        </div>
+
+        <!-- ROW 1: Surname | Given Name | Gender -->
+        <div class="hc-row">
+          <div class="hc-cell" style="flex:2.2">
+            <span class="hc-lbl">${esc(f.surname.label)}</span>
+            ${hint(f.surname.hint)}
+          </div>
+          <div class="hc-cell" style="flex:2.2">
+            <span class="hc-lbl">${esc(f.givenName.label)}</span>
+            ${hint(f.givenName.hint)}
+          </div>
+          <div class="hc-cell" style="flex:1.1">
+            ${genderCell}
+          </div>
+        </div>
+
+        <!-- ROW 2: Nationality | DOB | Occupation -->
+        <div class="hc-row">
+          <div class="hc-cell" style="flex:1.4">
+            <span class="hc-lbl">${esc(f.nationality.label)}</span>
+            ${hint(f.nationality.hint)}
+          </div>
+          <div class="hc-cell" style="flex:2">
+            <span class="hc-lbl">${esc(f.dob.label)}</span>
+            <div class="hc-dob">
+              <div class="hc-db">Y</div><div class="hc-db">Y</div><div class="hc-db">Y</div><div class="hc-db">Y</div>
+              <div class="hc-dbsp"></div>
+              <div class="hc-db">M</div><div class="hc-db">M</div>
+              <div class="hc-dbsp"></div>
+              <div class="hc-db">D</div><div class="hc-db">D</div>
+            </div>
+            ${hint(f.dob.hint)}
+          </div>
+          <div class="hc-cell" style="flex:1.4">
+            <span class="hc-lbl">${esc(f.occupation.label)}</span>
+            ${hint(f.occupation.hint)}
+          </div>
+        </div>
+
+        <!-- ROW 3: Address in Korea -->
+        <div class="hc-addr">
+          <div class="hc-addr-top">
+            <span class="hc-lbl">${esc(f.addressInKorea.label)}</span>
+          </div>
+          ${f.addressInKorea.hint ? `<div class="hc-addr-note">${esc(f.addressInKorea.hint)}</div>` : ''}
+        </div>
+
+        <!-- ROW 4: Purpose + Departure + Signature -->
+        <div class="hc-bottom">
+          <div class="hc-purpose">
+            <span class="hc-lbl">${esc(f.purposeOfVisit.label)}</span>
+            ${renderPurposeGrid(f.purposeOfVisit.options)}
+          </div>
+          <div class="hc-depart">
+            <div class="hc-dcell">
+              <span class="hc-lbl">${esc(f.departureDate.label)}</span>
+              ${hint(f.departureDate.hint)}
+            </div>
+            <div class="hc-dcell">
+              <span class="hc-lbl" style="font-size:8px;line-height:1.5">${esc(f.departureFlightNo.label)}</span>
+              ${hint(f.departureFlightNo.hint)}
+            </div>
+            <div class="hc-dcell">
+              <span class="hc-lbl">${esc(f.signature.label)}</span>
+              ${hint(f.signature.hint)}
+            </div>
+          </div>
+        </div>
+
+      </div>`;
 }
 
 function generatePage(lang) {
   const data = FORM_DATA[lang.code] || FORM_DATA['en'];
-  const dir  = lang.rtl ? 'rtl' : 'ltr';
-  const desc = `${esc(data.formTitle)} ${esc(lang.native)}. Free Korea arrival card translation — all fields explained in ${esc(lang.name)}.`;
+  const dir  = (lang.rtl || data.rtl) ? ' dir="rtl"' : '';
+  const transCard = renderTransCard(data, lang);
+  const transHeader = `📝 ${data.formTitle} — ${lang.native}`;
+  const langBtnText = `${lang.flag || '🌐'} ${lang.name} — ${lang.native}`;
+  const desc = `${data.formTitle} ${lang.native}. Free Korea arrival card translation — all fields explained in ${lang.name}.`;
 
-  return `<!DOCTYPE html>
-<html lang="${lang.code}" dir="${dir}">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${esc(data.formTitle)} — ${esc(lang.native)} | Korea Arrival Card</title>
-  <meta name="description" content="${desc}">
-  <meta property="og:title" content="${esc(data.formTitle)} — ${esc(lang.native)}">
-  <meta property="og:description" content="${desc}">
-  <meta property="og:url" content="${BASE_URL}/${lang.code}/">
-  <meta property="og:type" content="website">
-  <link rel="canonical" href="${BASE_URL}/${lang.code}/">
-${hreflangTags()}
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇰🇷</text></svg>">
-  <script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date()); gtag('config', '${GA_ID}');
-  </script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --primary: #0f4c75; --teal: #1b9aaa; --accent: #f4a261;
-      --bg: #f0f4f8; --card: #fff; --border: #d0dae6;
-      --text: #1a2535; --muted: #5a6a7e; --radius: 10px;
+  let html = template;
+
+  // 1. html lang + dir
+  html = html.replace('<html lang="en">', `<html lang="${lang.code}"${dir}>`);
+
+  // 2. title
+  html = html.replace(
+    '<title>Korea Arrival Card Translator — 155 Languages</title>',
+    `<title>${esc(data.formTitle)} — ${esc(lang.native)} | Korea Arrival Card</title>`
+  );
+
+  // 3. meta description
+  html = html.replace(
+    /(<meta name="description" content=")[^"]*(")/,
+    `$1${desc}$2`
+  );
+
+  // 4. canonical URL
+  html = html.replace(
+    `<link rel="canonical"           href="${BASE_URL}/">`,
+    `<link rel="canonical"           href="${BASE_URL}/${lang.code}/">`
+  );
+
+  // 5. script src → absolute paths (so /ja/index.html can find /languages.js)
+  html = html.replace('src="languages.js"', 'src="/languages.js"');
+  html = html.replace('src="form-data.js"', 'src="/form-data.js"');
+
+  // 6. lang button pre-filled
+  html = html.replace(
+    '<span id="lang-btn-text">— Choose language —</span>',
+    `<span id="lang-btn-text">${langBtnText}</span>`
+  );
+
+  // 7. trans-header pre-filled
+  html = html.replace(
+    '<div class="panel-header" id="trans-header">📝 Translation</div>',
+    `<div class="panel-header" id="trans-header">${transHeader}</div>`
+  );
+
+  // 8. trans-content: replace select-prompt with pre-rendered card
+  html = html.replace(
+    /(<div id="trans-content">)\s*<div class="select-prompt">[\s\S]*?<\/div>\s*(<\/div>)/,
+    `$1\n        ${transCard}\n      $2`
+  );
+
+  // 9. "All languages" link injected into lang-bar
+  html = html.replace(
+    `    </div>\n  </div>\n\n  <!-- Main content: image + translation -->`,
+    `    </div>\n    <a href="${BASE_URL}/" class="all-langs-link">🌐 155 languages →</a>\n  </div>\n\n  <!-- Main content: image + translation -->`
+  );
+
+  // 9b. CSS for the all-langs-link (injected before </style>)
+  html = html.replace(
+    `  </style>\n</head>`,
+    `    .all-langs-link {
+      display: inline-flex; align-items: center;
+      background: var(--accent); color: #fff; text-decoration: none;
+      border-radius: 8px; padding: 8px 16px; font-size: .85rem; font-weight: 700;
+      white-space: nowrap; flex-shrink: 0;
     }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-    .site-header { background: var(--primary); color: #fff; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
-    .back-link { color: rgba(255,255,255,.85); text-decoration: none; font-size: .9rem; display: flex; align-items: center; gap: 6px; }
-    .back-link:hover { color: #fff; }
-    .header-flag { font-size: 1.6rem; }
-    main { max-width: 680px; margin: 0 auto; padding: 28px 16px 56px; }
-    h1 { font-size: 1.45rem; font-weight: 800; color: var(--primary); margin-bottom: 6px; }
-    .lang-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--teal); color: #fff; border-radius: 20px; padding: 4px 14px; font-size: .82rem; margin-bottom: 24px; }
-    .field { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; box-shadow: 0 1px 4px rgba(15,76,117,.07); }
-    .field-en { font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 3px; }
-    .field-label { font-size: 1.05rem; font-weight: 700; color: var(--primary); }
-    .field-hint { font-size: .86rem; color: var(--muted); line-height: 1.6; margin-top: 5px; }
-    .field-options { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-    .option { background: #f0f4f8; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: .8rem; }
-    .cta-box { background: var(--primary); color: #fff; border-radius: var(--radius); padding: 22px 20px; text-align: center; margin-top: 36px; }
-    .cta-box p { font-size: .9rem; opacity: .82; margin-bottom: 14px; }
-    .cta-btn { display: inline-block; background: var(--accent); color: #fff; text-decoration: none; border-radius: 8px; padding: 11px 26px; font-weight: 700; font-size: .95rem; }
-    .cta-btn:hover { opacity: .9; }
-    footer { text-align: center; padding: 24px 16px; color: var(--muted); font-size: .78rem; }
-    footer a { color: var(--teal); text-decoration: none; }
-    @media (max-width: 600px) { main { padding: 18px 12px 40px; } h1 { font-size: 1.2rem; } }
-  </style>
-</head>
-<body>
-  <header class="site-header">
-    <a class="back-link" href="${BASE_URL}/">
-      <span class="header-flag">🇰🇷</span>
-      Korea Arrival Card · 155 languages
-    </a>
-    <span style="font-size:.8rem;opacity:.7">${lang.flag} ${esc(lang.native)}</span>
-  </header>
+    .all-langs-link:hover { opacity: .88; }
+  </style>\n</head>`
+  );
 
-  <main>
-    <h1>${esc(data.formTitle)} — ${esc(lang.native)}</h1>
-    <span class="lang-badge">${lang.flag} ${esc(lang.name)}</span>
+  // 11. init JS: always start with this page's language
+  html = html.replace(
+    `(function init() {
+      const urlLang = new URLSearchParams(location.search).get('lang');
+      let saved;
+      try { saved = localStorage.getItem('arrival-lang'); } catch(e) {}
+      const target = urlLang || saved;
+      if (target && FORM_DATA[target]) selectLang(target);
+    })();`,
+    `(function init() {
+      const urlLang = new URLSearchParams(location.search).get('lang');
+      const target = urlLang || '${lang.code}';
+      if (target && FORM_DATA[target]) selectLang(target);
+    })();`
+  );
 
-${renderFields(data, lang)}
-
-    <div class="cta-box">
-      <p>Need a different language? / 다른 언어로 보기</p>
-      <a class="cta-btn" href="${BASE_URL}/">Choose from 155 languages →</a>
-    </div>
-  </main>
-
-  <footer>
-    Korea Arrival Card Translator &nbsp;·&nbsp;
-    <a href="${BASE_URL}/">korea-arrival-card.vercel.app</a>
-  </footer>
-</body>
-</html>`;
+  return html;
 }
 
-// Generate all pages
+// Re-generate all pages
 let count = 0;
 for (const lang of targetLangs) {
   const outDir = path.join(baseDir, lang.code);
   fs.mkdirSync(outDir, { recursive: true });
   fs.writeFileSync(path.join(outDir, 'index.html'), generatePage(lang), 'utf8');
-  process.stdout.write(`✓ /${lang.code}/  ${lang.name} (${lang.native})\n`);
+  process.stdout.write(`✓ /${lang.code}/  ${lang.name}\n`);
   count++;
 }
 
-process.stdout.write(`\nDone — ${count} pages generated.\n`);
+process.stdout.write(`\nDone — ${count} pages regenerated.\n`);
